@@ -94,11 +94,33 @@ contract BSCValidatorSet is IBSCValidatorSet, System, IParamSubscriber, IApplica
         // reserve for future use
         uint256[19] slots;
     }
+  struct ParamChangePackage {
+        string key;
+        bytes value;
+        address target;
+    }
 
-    struct ValidatorSetPackage {
-        uint8 packageType;
-        Validator[] validatorSet;
-        bytes[] voteAddrs;
+    function handleSynPackage(
+        uint8,
+        bytes calldata msgBytes
+    ) external override onlyCrossChainContract returns (bytes memory responsePayload) {
+        revert("deprecated");
+    }
+
+    // should not happen
+    function handleAckPackage(uint8, bytes calldata) external override onlyCrossChainContract {
+        revert("deprecated");
+    }
+
+    // should not happen
+    function handleFailAckPackage(uint8, bytes calldata) external override onlyCrossChainContract {
+        revert("deprecated");
+    }
+
+    function updateParam(string calldata key, bytes calldata value, address target) external onlyGovernorTimelock {
+        ParamChangePackage memory proposal = ParamChangePackage(key, value, target);
+        notifyUpdates(proposal);
+    }
     }
 
     /*----------------- modifiers -----------------*/
